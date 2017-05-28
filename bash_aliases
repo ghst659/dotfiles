@@ -79,28 +79,28 @@ function nulio {
 }
 ##############################################################################
 function pyenv {
-    if (( $# == 1)); then
-	local venv=$1
+    if (( $# == 1 )); then
+	local venv="$1"
 	local act="${venv}/bin/activate"
 	if [[ -d ${venv} && -f ${act} ]]; then
 	    source ${act}
 	else
-	    echo "invalid virtual env: ${workspace}" >/dev/stderr
+	    echo "invalid virtual env: ${venv}" >/dev/stderr
 	fi
     else
-	echo "usage: pyenv VENVDIR" >/dev/stderr
+	echo "usage: ${FUNCNAME[0]} VENVDIR" >/dev/stderr
     fi
 }
 
 function gopath {
-    if (( $# > 0 )); then
-	local workspace=$1
+    if (( $# == 1 )); then
+	local workspace="$1"
 	if [[ -d ${workspace} ]]; then
 	    pushd ${workspace}
 	    export GOPATH=$(pwd)
 	    for subdir in "src" "pkg" "bin"; do
 		if [[ ! -d ${subdir} ]]; then
-		    mkdir ${subdir}
+		    mkdir -p ${subdir}
 		else
 		    echo "info: ${subdir} exists" >/dev/stderr
 		fi
@@ -110,7 +110,7 @@ function gopath {
 	    echo "error: illegal workspace dir: ${workspace}" >/dev/stderr
 	fi
     else
-	echo "usage: gowork WORKSPACE" >/dev/stderr
+	echo "usage: ${FUNCNAME[0]} WORKSPACE" >/dev/stderr
     fi
 }
 
