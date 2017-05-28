@@ -82,6 +82,12 @@ function pyenv {
     if (( $# == 1 )); then
 	local venv="$1"
 	local act="${venv}/bin/activate"
+	if [[ ! -e "${venv}" ]]; then
+	    echo "creating new env: ${venv}" >/dev/stderr
+	    python3 -B -m venv ${venv}
+	else
+	    echo "${venv} exists" >/dev/stderr
+	fi
 	if [[ -d ${venv} && -f ${act} ]]; then
 	    source ${act}
 	else
