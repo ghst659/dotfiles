@@ -25,6 +25,11 @@ if [[ -z ${saved_path_stack+x} ]]; then
     declare -a saved_path_stack=( ${PATH} )
 fi
 
+function push_path {
+    saved_path_stack+=( ${PATH} )
+    export PATH="$1"
+}
+
 function pop_path {
     if [[ ! -z ${saved_path_stack+x} ]]; then
 	export PATH=${saved_path_stack[${#saved_path_stack[@]}-1]}
@@ -34,9 +39,12 @@ function pop_path {
     fi
 }
 
-function push_path {
-    saved_path_stack+=( ${PATH} )
-    export PATH="$1"
+function reset_path {
+    if [[ ! -z ${saved_path_stack+x} ]]; then
+	while (( ${#saved_path_stack[@]} > 1 )); do
+	    pop_path
+	done
+    fi
 }
 
 alias rsr=pop_path
@@ -52,7 +60,7 @@ function psr {
 function asr {
     local -a new_path=()
     local -a path_ary=( $(psr) )
-    local -a additions=( $* )
+    local -a additions=( $@ )
     for a in ${additions[@]}; do
 	local include=1
 	for p in ${path_ary[@]}; do
